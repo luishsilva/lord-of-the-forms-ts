@@ -61,7 +61,17 @@ export class ClassForm extends Component {
       } else {
         this.removeInputErrorValidate(e.target.name);
       }
-    } else {
+    } 
+
+    if (e.target.name === 'city') {
+      if (!allCities.includes(e.target.value)) {
+        this.addInputErrorValidate(e.target.name);
+      } else {
+        this.removeInputErrorValidate(e.target.name);
+      }
+    }
+    
+    if (e.target.name !== 'email' && e.target.name !== 'city') {
       if (!isInputLengthValid(e.target.value,2)) {
         this.addInputErrorValidate(e.target.name);
       } else {
@@ -69,6 +79,7 @@ export class ClassForm extends Component {
       }
     }
   }
+
 
   addInputErrorValidate = (inputName: string) => {
     const { inputErrors } = this.state;
