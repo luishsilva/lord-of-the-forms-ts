@@ -90,6 +90,16 @@ form label {
   justify-content: space-between;
 }
 
+.phone-input-md {
+  width: 30px !important;
+  text-align: center;
+}
+
+.phone-input-sm {
+  width: 15px !important;
+  text-align: center;
+}
+
 #phone-input-1 {
   width: 30px;
 }
@@ -161,4 +171,10 @@ form label {
   display: flex;
   justify-content: space-between;
   flex: 2;
+}
+
+.h-line{
+  border: 0.3px solid black;
+  width: 0.3rem;
+  height: 0px;
 }
