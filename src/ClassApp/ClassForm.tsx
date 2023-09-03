@@ -1,19 +1,16 @@
-import React, { Component, createRef } from "react";
+import React, { Component, RefObject, } from "react";
 import  TextInput  from "./components/TextInput"
-import  PhoneInput  from "./components/PhoneInput"
 import { allCities } from "../utils/all-cities";
 import { ErrorMessage } from "../ErrorMessage";
 import { isInputLengthValid, isEmailValid } from "../utils/validations"
-
-const phoneNumberErrorMessage = "Invalid Phone Number";
 
 const errorMessages = [
   "First name must be at least 2 characters long",
   "Last name must be at least 2 characters long",
   "Email is Invalid",
   "State is Invalid",
-  "Invalid Phone Number",
 ];
+const phoneNumberErrorMessage = "Invalid Phone Number";
 
 const formInput = [
   {label: 'First Name' ,placeholder: 'First Name', name: 'firstName', type:'text'},
@@ -22,29 +19,24 @@ const formInput = [
   {label: 'City', placeholder: 'City', name: 'city', type:'text'},
 ];
 
-const phoneInput = [
-  {'phone-input-1': '55', name: 'phone-input-1', type:'text', placeholder: '55', maxLen: 2},
-  {'phone-input-2': '55', name: 'phone-input-2', type:'text', placeholder: '55', maxLen: 2},
-  {'phone-input-3': '55', name: 'phone-input-3', type:'text', placeholder: '55', maxLen: 2},
-  {'phone-input-4': '5',  name: 'phone-input-4', type:'text', placeholder: '5', maxLen: 1},
-];
-
-
-
 type FormType = {
   isFormSubmitted: boolean;
   inputErrors: string[],
   phoneInputState: string[],
+  ref: RefObject<HTMLInputElement>[];
 }
-
 export class ClassForm extends Component {
   //Create the form State
   state: FormType = {
     isFormSubmitted: false,
     inputErrors: [],
-    phoneInputState: ["", "", "", ""]
+    phoneInputState: ["", "", "", ""],
+    refs: [React.createRef(), React.createRef(), React.createRef(), React.createRef()]
   }
 
+  ref0 = this.refs[0];
+
+  
   handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     this.setState({
@@ -85,6 +77,16 @@ export class ClassForm extends Component {
   }
 
   handlePhoneInputChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const lengths = [2, 2, 2, 1];
+    const currentMaxLength = lengths[index];
+    const nextRef = this.refs[index + 1];
+    const value = e.target.value;
+    const shouldGoToNextRef = currentMaxLength === value.length
+
+    if (shouldGoToNextRef){
+      //nextRef.current?.focus()
+    }
+
     const newState = this.state.phoneInputState.map((phoneInput, phoneInputIndex) => 
       index === phoneInputIndex ? e.target.value : phoneInput
     );
@@ -94,21 +96,6 @@ export class ClassForm extends Component {
     })
     
   }
-
-  /* handlePhoneInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({
-      [e.target.name]: e.target.value,
-    });
-    console.log(e.target.name, e.target.value)
-    /* if (e.target.name !== 'email' && e.target.name !== 'city') {
-      if (!isInputLengthValid(e.target.value,2)) {
-        this.addInputErrorValidate(e.target.name);
-      } else {
-        this.removeInputErrorValidate(e.target.name);
-      }
-    } 
-  } */
-
 
   addInputErrorValidate = (inputName: string) => {
     const { inputErrors } = this.state;
@@ -154,62 +141,25 @@ export class ClassForm extends Component {
         <div className="input-wrap">
           <label htmlFor="phone">Phone:</label>
           <div id="phone-input-wrap">
-            {
-              phoneInput.length && phoneInput.map((item, index) => (
-                <>
-                  <PhoneInput 
-                    key={item.name}
-                    id={item.name}
-                    name={item.name}
-                    type={'text'}
-                    placeholder={item.placeholder}
-                    className={phoneInput.length !== index+1 ? "phone-input-md" : 'phone-input-sm'}
-                    value={this.state.phoneInputState[index]}
-                    onChange={this.handlePhoneInputChange(index)}
-                    error={errorMessages[index]}
-                    hasError={this.hasError(item.name)}
-                    maxLength={item.maxLen}
-                  />
-                </>
-              ))
-            }
-            {/* <input 
+            <input 
               type="text" 
               id="phone-input-1" 
-              name="phone-input-1" 
-              
               placeholder="55" 
+              maxLength={2}
+              onChange={this.handlePhoneInputChange(0)}
+              ref={this.ref0}
             />
             -
-            <input 
-              type="text" 
-              id="phone-input-2" 
-              name="phone-input-2" 
-              placeholder="55" 
-              onChange={this.handleInputChange}
-            />
+            <input type="text" id="phone-input-2" placeholder="55" />
             -
-
-            <input 
-              type="text" 
-              id="phone-input-3" 
-              name="phone-input-3" 
-              placeholder="55" 
-              onChange={this.handleInputChange}
-
-            />
+            <input type="text" id="phone-input-3" placeholder="55" />
             -
-            <input 
-              type="text" 
-              id="phone-input-4" 
-              name="phone-input-4" 
-              placeholder="5" 
-              onChange={this.handleInputChange}
-            /> */}
+            <input type="text" id="phone-input-4" placeholder="5" />
           </div>
         </div>
 
-        <ErrorMessage message={phoneNumberErrorMessage} show={isFormSubmitted} />
+        <ErrorMessage message={phoneNumberErrorMessage} show={true} />
+
 
         <input type="submit" value="Submit" />
       </form>
