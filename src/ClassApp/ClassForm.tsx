@@ -23,7 +23,7 @@ type FormType = {
   isFormSubmitted: boolean;
   inputErrors: string[],
   phoneInputState: string[],
-  ref: RefObject<HTMLInputElement>[];
+  refs: RefObject<HTMLInputElement>[];
 }
 export class ClassForm extends Component {
   //Create the form State
@@ -33,9 +33,6 @@ export class ClassForm extends Component {
     phoneInputState: ["", "", "", ""],
     refs: [React.createRef(), React.createRef(), React.createRef(), React.createRef()]
   }
-
-  ref0 = this.refs[0];
-
   
   handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -79,12 +76,22 @@ export class ClassForm extends Component {
   handlePhoneInputChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const lengths = [2, 2, 2, 1];
     const currentMaxLength = lengths[index];
-    const nextRef = this.refs[index + 1];
+    const nextRef = this.state.refs[index + 1];
+    const prevRef = this.state.refs[index - 1];
     const value = e.target.value;
-    const shouldGoToNextRef = currentMaxLength === value.length
+    const shouldGoToNextRef = currentMaxLength === value.length;
+    const shouldGoToPrevRef = value.length === 0;
 
-    if (shouldGoToNextRef){
-      //nextRef.current?.focus()
+    if (shouldGoToNextRef) {
+      if (nextRef !== undefined) {
+        nextRef.current?.focus();
+      }
+    }
+
+    if (shouldGoToPrevRef) {
+      if (prevRef !== undefined) {
+        prevRef.current?.focus();
+      }
     }
 
     const newState = this.state.phoneInputState.map((phoneInput, phoneInputIndex) => 
@@ -141,24 +148,45 @@ export class ClassForm extends Component {
         <div className="input-wrap">
           <label htmlFor="phone">Phone:</label>
           <div id="phone-input-wrap">
-            <input 
-              type="text" 
-              id="phone-input-1" 
-              placeholder="55" 
+            <input
+              type="text"
+              id="phone-input-1"
+              placeholder="55"
               maxLength={2}
               onChange={this.handlePhoneInputChange(0)}
-              ref={this.ref0}
+              ref={this.state.refs[0]}
             />
             -
-            <input type="text" id="phone-input-2" placeholder="55" />
+            <input
+              type="text"
+              id="phone-input-2"
+              placeholder="55"
+              maxLength={2}
+              onChange={this.handlePhoneInputChange(1)}
+              ref={this.state.refs[1]}
+            />
             -
-            <input type="text" id="phone-input-3" placeholder="55" />
+            <input
+              type="text"
+              id="phone-input-3"
+              placeholder="55"
+              maxLength={2}
+              onChange={this.handlePhoneInputChange(2)}
+              ref={this.state.refs[2]}
+            />
             -
-            <input type="text" id="phone-input-4" placeholder="5" />
+            <input
+              type="text"
+              id="phone-input-4"
+              placeholder="5"
+              maxLength={1}
+              onChange={this.handlePhoneInputChange(3)}
+              ref={this.state.refs[3]}
+            />
           </div>
         </div>
 
-        <ErrorMessage message={phoneNumberErrorMessage} show={true} />
+        <ErrorMessage message={phoneNumberErrorMessage} show={isFormSubmitted} />
 
 
         <input type="submit" value="Submit" />
